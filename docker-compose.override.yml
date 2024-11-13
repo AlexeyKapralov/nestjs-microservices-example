@@ -1,0 +1,37 @@
+version: "3"
+services:
+  service-user:
+    environment:
+      - POSTGRES_USER=api
+      - POSTGRES_PASSWORD=development_pass
+      - POSTGRES_MULTIPLE_DATABASES="user-api","user-api-testing"
+    volumes:
+      - ./docker-utils:/docker-entrypoint-initdb.d
+      - user_api_data:/data/postgres
+    ports:
+      - 5439:5432
+
+  service-token:
+    environment:
+      - POSTGRES_USER=api
+      - POSTGRES_PASSWORD=development_pass
+      - POSTGRES_MULTIPLE_DATABASES="token-api","token-api-testing"
+    volumes:
+      - ./docker-utils:/docker-entrypoint-initdb.d
+      - token_api_data:/data/postgres
+    ports:
+      - 5440:5432
+
+  rabbitmq:
+    image: rabbitmq                          # Используем базовый образ RabbitMQ
+    restart: always
+    volumes:
+      - rabbitmq_api_data:/data/rabbitmq
+    ports:
+      - "5672:5672"                          # Порт для подключения к RabbitMQ
+      - "15672:15672"
+
+volumes:
+  user_api_data: {}
+  token_api_data: {}
+  rabbitmq_api_data: {}
